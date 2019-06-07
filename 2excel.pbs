@@ -1,0 +1,27 @@
+#!/bin/bash
+#PBS -l nodes=1:ppn=20
+#PBS -l walltime=01:00:00
+#PBS -A mdw18_a_g_sc_default
+#PBS -j oe
+#PBS -e error.txt
+#PBS -o output.txt
+module purge
+unset LD_PRELOAD
+module load matlab
+
+module load gams
+export LD_PRELOAD=/opt/aci/sw/gams/24.8.5/libstdc++.so.6
+
+SCRDIR=$HOME/work/GitRepos/ERCOT-GE
+
+RUNDIR=$HOME/scratch/run-${PBS_JOBID/.*}
+mkdir -p $RUNDIR
+cd $SCRDIR
+cp -r  $SCRDIR $RUNDIR
+cd $RUNDIR/ERCOT-GE
+
+time matlab -nodisplay -nosplash -r 'run("./matlab2excel.m");quit '
+
+cp -r batch_Cost.xlsx $SCRDIR/
+cp -r batch_IMR.xlsx $SCRDIR/
+cp -r batch_extra.xlsx $SCRDIR/

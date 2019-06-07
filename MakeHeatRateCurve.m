@@ -19,7 +19,7 @@ end
 
 
 % Correction for NGCC to maintain monotonicity
-% hry(2:5) = sort(hry(2:5),'descend');
+hry(2:5) = sort(hry(2:5),'descend');
 
 % if (hry(4) - hry(5) < 0)
 %    tmp = hry(5);
