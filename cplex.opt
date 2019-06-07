@@ -1,0 +1,10 @@
+threads 20
+*tilim 2000
+*tilim 15000
+tilim 8000
+tuningtilim 300
+probetime 100
+mipstart 1
+mipemphasis 2
+bbinterval 3 
+*varsel 3 

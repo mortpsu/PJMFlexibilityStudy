@@ -1,0 +1,32 @@
+#!/bin/bash
+#PBS -l nodes=1:ppn=20
+#PBS -l walltime=12:00:00
+#PBS -t 180
+#PBS -l pmem=12gb 
+#PBS -A mdw18_a_g_sc_default
+# #PBS -A kaf26_a_g_sc_default
+# #PBS -A kzk10_a_g_sc_default
+#PBS -k o
+#PBS -j oe
+#PBS -e ~/base/stderror${PBS_ARRAYID}.txt
+#PBS -o ~/base/stdout${PBS_ARRAYID}.txt
+module purge
+unset LD_PRELOAD
+
+
+module load matlab
+export LD_PRELOAD=/opt/aci/sw/gams/24.8.5/libstdc++.so.6
+module load gams
+
+# mdw18_a_g_sc_default
+SCRDIR=~/ERCOT/
+
+RUNDIR=~/scratch/run-${PBS_JOBID/.*}
+mkdir -p $RUNDIR
+cd $SCRDIR
+rsync -a  $SCRDIR/ $RUNDIR/
+cd $RUNDIR/
+
+time matlab -nodisplay -nosplash -r "base_forney_daynum6(${PBS_ARRAYID});quit;" 
+
+rsync -a results_${PBS_ARRAYID}_v6.mat $SCRDIR/../base

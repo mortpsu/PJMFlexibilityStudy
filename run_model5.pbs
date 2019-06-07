@@ -1,0 +1,38 @@
+#!/bin/bash
+#PBS -l nodes=1:ppn=20
+#PBS -l walltime=12:00:00
+# #PBS -t 21,59,95,97,101,108,224,276,281,290
+# #PBS -t 63,118,218
+# #PBS -t 75,87,98,128,157,234,258,266,278,279
+#PBS -t 52, 69, 99, 114, 172, 189, 197, 207, 249, 292
+#PBS -l pmem=12gb 
+# #PBS -A mdw18_a_g_sc_default
+#PBS -A kzk10_a_g_sc_default
+#PBS -k o
+#PBS -j oe
+#PBS -e ~/base/stderror${PBS_ARRAYID}.txt
+#PBS -o ~/base/stdout${PBS_ARRAYID}.txt
+module purge
+unset LD_PRELOAD
+
+
+module load matlab
+export LD_PRELOAD=/opt/aci/sw/gams/24.8.5/libstdc++.so.6
+module load gams
+
+# mdw18_a_g_sc_default
+SCRDIR=~/ERCOT/
+
+RUNDIR=~/scratch/run-${PBS_JOBID/.*}
+mkdir -p $RUNDIR
+cd $SCRDIR
+rsync -a  $SCRDIR/ $RUNDIR/
+cd $RUNDIR/
+
+time matlab -nodisplay -nosplash -r "base_forney_daynum5(${PBS_ARRAYID});quit;" 
+
+rsync -a results_${PBS_ARRAYID}_v5.mat $SCRDIR/../base
+
+rsync -a results_base_${PBS_ARRAYID}_v5.gdx $SCRDIR/../baseonly_v5
+rsync -a ERCOT_p1_${PBS_ARRAYID}_v5.gdx $SCRDIR/../baseonly_v5
+
